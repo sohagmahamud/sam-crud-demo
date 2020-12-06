@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "sam-crud"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1v7n9qbw344rv"
+s3_prefix = "sam-crud"
+region = "ap-southeast-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Table=\"Users\" Region=\"ap-southeast-1\" AWSEnv=\"AWS\""
