@@ -13,49 +13,22 @@ logger.setLevel(logging.INFO)
 region = 'ap-southeast-1'
 bucket_name = 'sam-crud-csv-bucket'
 
-
-    # write csv to s3 from api gateway /upload endpoint.
-def lambda_handler(event, context):    
+    # Create bucket
+def s3create():
     
-    if ('body' not in event or
-            event['httpMethod'] != 'POST'):
-        return {
-            'statusCode': 400,
-            'headers': {},
-            'body': json.dumps({'msg': 'Bad Request'})
-        }
-    
-        # Create bucket
-    def s3create():
-        
-        try:
-            if region is None:
-                s3_client = boto3.client('s3')
-                s3_client.create_bucket(Bucket=bucket_name)
-            else:
-                s3_client = boto3.client('s3', region_name=region)
-                location = {'LocationConstraint': region}
-                s3_client.create_bucket(Bucket=bucket_name,
-                                        CreateBucketConfiguration=location)
-        except ClientError as e:
-            logging.error(e)
-            return False
-        return True
-    
-    print(event)
-    file_content = base64.b64decode(event["body"])
-    file_path = 'sample.csv'
-    s3 = boto3.client('s3')
     try:
-        s3_response = s3.put_object(Bucket=bucket_name, Key=file_path, Body=file_content)
-    except Exception as e:
-        raise IOError(e)
-    return {
-        'statusCode': 200,
-        'body': {
-            'file_path': file_path
-        }
-    }    
+        if region is None:
+            s3_client = boto3.client('s3')
+            s3_client.create_bucket(Bucket=bucket_name)
+        else:
+            s3_client = boto3.client('s3', region_name=region)
+            location = {'LocationConstraint': region}
+            s3_client.create_bucket(Bucket=bucket_name,
+                                    CreateBucketConfiguration=location)
+    except ClientError as e:
+        logging.error(e)
+        return False
+    return True
     
     # read csv from s3 then write to dynamodb
 def dynamowrite():    
@@ -103,3 +76,30 @@ def dynamowrite():
         'statusCode': 200,
         'body': json.dumps('Success! Users in CSV uploaded to DynamoDB.')
     }
+    
+    # write csv to s3 from api gateway /upload endpoint.
+def lambda_handler(event, context):    
+    
+    if ('body' not in event or
+            event['httpMethod'] != 'POST'):
+        return {
+            'statusCode': 400,
+            'headers': {},
+            'body': json.dumps({'msg': 'Bad Request'})
+        }
+    print(event)
+    s3create() # calling method to create bucket
+    file_content = base64.b64decode(event["body"])
+    file_path = 'sample.csv'
+    s3 = boto3.client('s3')
+    try:
+        s3_response = s3.put_object(Bucket=bucket_name, Key=file_path, Body=file_content)
+    except Exception as e:
+        raise IOError(e)
+    return {
+        'statusCode': 200,
+        'body': {
+            'file_path': file_path
+        }
+    }    
+dynamowrite() # calling method to write csv content to dynamodb table.
