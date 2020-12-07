@@ -8,9 +8,6 @@ Description: 'sam-python-crud-sample
 Globals:
   Function:
     Timeout: 60
-  Api:
-    BinaryMediaTypes:
-    - '*/*'
 Parameters:
   Table:
     Type: String
@@ -22,6 +19,12 @@ Parameters:
     Type: String
     Default: AWS
 Resources:
+  UploadAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      BinaryMediaTypes:
+      - text/csv
   UploadFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -37,13 +40,13 @@ Resources:
           AWSENV:
             Ref: AWSEnv
       Events:
-        Users:
+        UploadUserApi:
           Type: Api
           Properties:
             Path: /upload
             Method: post
-            BinaryMediaTypes:
-            - '*/*'
+            RestApiId:
+              Ref: UploadAPI
       Policies:
       - DynamoDBCrudPolicy:
           TableName:
@@ -138,8 +141,8 @@ Resources:
         WriteCapacityUnits: '1'
       TableName: Users
 Outputs:
-  UsersApi:
-    Description: API Gateway endpoint URL for Prod stage for Upload Function
+  UploadAPI:
+    Description: API Gateway endpoint URL for Prod stage for Upload API
     Value:
       Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/upload/
   UploadFunction:

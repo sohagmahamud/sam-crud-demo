@@ -1,19 +1,17 @@
 import boto3
 import os
 import json
-import uuid
 from datetime import datetime
 import base64
 import csv
 import logging
 from botocore.exceptions import ClientError
 
+region = 'ap-southeast-1'
+bucket_name = 'sam-crud-csv-bucket'
 
-def s3create():
-    
     # Create bucket
-    region = 'ap-southeast-1'
-    bucket_name = 'sam-crud-csv-bucket'
+def s3create():
     
     try:
         if region is None:
@@ -29,9 +27,8 @@ def s3create():
         return False
     return True
     
-def lambda_handler(event, context):    
-    
     # write csv to s3 from api gateway /upload endpoint.
+def lambda_handler(event, context):    
     
     if ('body' not in event or
             event['httpMethod'] != 'POST'):
@@ -41,7 +38,8 @@ def lambda_handler(event, context):
             'body': json.dumps({'msg': 'Bad Request'})
         }
         
-    file_content = base64.b64decode(event['content'])
+    # file_content = base64.b64decode(event['content'])
+    file_content = (event['content'])
     file_path = 'sample.csv'
     s3 = boto3.client('s3')
     try:
@@ -54,6 +52,7 @@ def lambda_handler(event, context):
             'file_path': file_path
         }
     }    
+    
     
 def dynamowrite():    
     
@@ -72,20 +71,20 @@ def dynamowrite():
             region_name=region
         )
 
-
-    file_content = base64.b64decode(event['content'])
-    
     try:
-
-        record_list = (x.strip() for x in file_content['Body'].read().decode('utf-8').split('\r\n'))
+        
+        s3 = boto3.client('s3')
+        csv_file = s3.get_object(Bucket = bucket_name, Key = 'sample.csv' )
+        record_list = []
+        record_list = (x.strip() for x in csv_file['Body'].read().decode('utf-8').split('\r\n'))
         csv_reader = csv.reader(record_list, delimiter=',', quotechar='"')
-        headers = next(csv_reader)
+        csv_reader = next(csv_reader)
         now = datetime.now()
         x = now.strftime("%m/%d/%Y, %H:%M:%S")
         
         for row in csv_reader:
             UserName = row[0]
-            add_to_db = users_table.put_item(
+            users_table.put_item(
                 TableName = "Users",
                 Item = {
                     'username' : {'S' : str(UserName)},

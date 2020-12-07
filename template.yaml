@@ -21,6 +21,14 @@ Parameters:
     Default: AWS
 
 Resources:
+
+  UploadAPI:    
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      BinaryMediaTypes: [
+          "text/csv"
+      ]
   UploadFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -33,14 +41,16 @@ Resources:
           REGION: !Ref Region
           AWSENV: !Ref AWSEnv
       Events:
-        Users:
-          Type: Api
-          Properties:
-            Path: /upload
-            Method: post
+         UploadUserApi:
+           Type: Api
+           Properties:
+             Path: /upload
+             Method: post
+             RestApiId:
+               Ref: UploadAPI
       Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref UsersTable
+      - DynamoDBCrudPolicy:
+          TableName: !Ref UsersTable
   ListUsersFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -124,8 +134,8 @@ Resources:
       TableName: "Users"
 
 Outputs:
-  UsersApi:
-    Description: "API Gateway endpoint URL for Prod stage for Upload Function"
+  UploadAPI:
+    Description: "API Gateway endpoint URL for Prod stage for Upload API"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/upload/"
   UploadFunction:
     Description: "Upload Lambda Function ARN"
