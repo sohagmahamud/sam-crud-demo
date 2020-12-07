@@ -7,6 +7,9 @@ import csv
 import logging
 from botocore.exceptions import ClientError
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 region = 'ap-southeast-1'
 bucket_name = 'sam-crud-csv-bucket'
 
@@ -37,8 +40,8 @@ def lambda_handler(event, context):
             'headers': {},
             'body': json.dumps({'msg': 'Bad Request'})
         }
-        
-    file_content = base64.b64decode(event['content'])
+    print(event)
+    file_content = base64.b64decode(event["body"])
     file_path = 'sample.csv'
     s3 = boto3.client('s3')
     try:
