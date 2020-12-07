@@ -38,8 +38,7 @@ def lambda_handler(event, context):
             'body': json.dumps({'msg': 'Bad Request'})
         }
         
-    # file_content = base64.b64decode(event['content'])
-    file_content = (event['content'])
+    file_content = base64.b64decode(event['content'])
     file_path = 'sample.csv'
     s3 = boto3.client('s3')
     try:
@@ -53,7 +52,7 @@ def lambda_handler(event, context):
         }
     }    
     
-    
+    # read csv from s3 then write to dynamodb
 def dynamowrite():    
     
     table_name = os.environ.get('TABLE', 'Users')

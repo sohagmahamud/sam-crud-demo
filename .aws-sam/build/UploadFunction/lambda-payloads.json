@@ -1,0 +1,15 @@
+{
+    "UploadFunction": {
+        "lambda": {},
+        "apigateway": {
+            "path": "/upload",
+            "method": {
+                "value": "POST",
+                "items": [
+                    "POST"
+                ]
+            },
+            "body": {}
+        }
+    }
+}
