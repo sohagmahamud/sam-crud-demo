@@ -52,7 +52,7 @@ def lambda_handler(event, context):
         }
     }    
     
-    
+    # read csv from s3 then write to dynamodb
 def dynamowrite():    
     
     table_name = os.environ.get('TABLE', 'Users')
