@@ -13,23 +13,7 @@ logger.setLevel(logging.INFO)
 region = 'ap-southeast-1'
 bucket_name = 'sam-crud-csv-bucket'
 
-    # Create bucket
-def s3create():
-    
-    try:
-        if region is None:
-            s3_client = boto3.client('s3')
-            s3_client.create_bucket(Bucket=bucket_name)
-        else:
-            s3_client = boto3.client('s3', region_name=region)
-            location = {'LocationConstraint': region}
-            s3_client.create_bucket(Bucket=bucket_name,
-                                    CreateBucketConfiguration=location)
-    except ClientError as e:
-        logging.error(e)
-        return False
-    return True
-    
+
     # write csv to s3 from api gateway /upload endpoint.
 def lambda_handler(event, context):    
     
@@ -40,6 +24,24 @@ def lambda_handler(event, context):
             'headers': {},
             'body': json.dumps({'msg': 'Bad Request'})
         }
+    
+        # Create bucket
+    def s3create():
+        
+        try:
+            if region is None:
+                s3_client = boto3.client('s3')
+                s3_client.create_bucket(Bucket=bucket_name)
+            else:
+                s3_client = boto3.client('s3', region_name=region)
+                location = {'LocationConstraint': region}
+                s3_client.create_bucket(Bucket=bucket_name,
+                                        CreateBucketConfiguration=location)
+        except ClientError as e:
+            logging.error(e)
+            return False
+        return True
+    
     print(event)
     file_content = base64.b64decode(event["body"])
     file_path = 'sample.csv'

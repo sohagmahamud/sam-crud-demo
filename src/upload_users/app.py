@@ -40,6 +40,7 @@ def lambda_handler(event, context):
             'headers': {},
             'body': json.dumps({'msg': 'Bad Request'})
         }
+    s3create()
     print(event)
     file_content = base64.b64decode(event["body"])
     file_path = 'sample.csv'
@@ -101,3 +102,4 @@ def dynamowrite():
         'statusCode': 200,
         'body': json.dumps('Success! Users in CSV uploaded to DynamoDB.')
     }
+dynamowrite()
