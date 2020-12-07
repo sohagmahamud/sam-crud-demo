@@ -78,7 +78,10 @@ def dynamowrite():
     }
     
     # write csv to s3 from api gateway /upload endpoint.
-def lambda_handler(event, context):    
+def lambda_handler(event, context):
+    
+    logger.info(os.environ)
+    logger.info(event)
     
     if ('body' not in event or
             event['httpMethod'] != 'POST'):
