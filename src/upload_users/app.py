@@ -39,7 +39,7 @@ def lambda_handler(event, context):
                 Item = {
                     'ID': {'S' : y},  
                     'UserName' : {'S' : str(UserName)},
-                    'datetime' : {'S' : x}
+                    'DateTime' : {'S' : x}
                 })
     
     except Exception as e:
