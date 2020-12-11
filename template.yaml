@@ -51,6 +51,8 @@ Resources:
       Policies:
       - DynamoDBCrudPolicy:
           TableName: !Ref UsersTable
+      - S3CrudPolicy: 
+          BucketName: sam-crud-csv-bucket
   ListUsersFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -116,21 +118,21 @@ Resources:
     Properties:
       AttributeDefinitions:
         -
-          AttributeName: "username"
+          AttributeName: "ID"
           AttributeType: "S"
         -
-          AttributeName: "date"
+          AttributeName: "UserName"
           AttributeType: "S"
       KeySchema:
         -
-          AttributeName: "username"
+          AttributeName: "ID"
           KeyType: "HASH"
         -
-          AttributeName: "date"
+          AttributeName: "UserName"
           KeyType: "RANGE"
       ProvisionedThroughput:
-        ReadCapacityUnits: "1"
-        WriteCapacityUnits: "1"
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
       TableName: "Users"
 
 Outputs:
