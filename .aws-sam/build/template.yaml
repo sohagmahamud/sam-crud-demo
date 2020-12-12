@@ -51,8 +51,7 @@ Resources:
       - DynamoDBCrudPolicy:
           TableName:
             Ref: UsersTable
-      - S3CrudPolicy:
-          BucketName: sam-crud-csv-bucket
+      - AmazonS3FullAccess
   ListUsersFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -119,7 +118,7 @@ Resources:
         Users:
           Type: Api
           Properties:
-            Path: /users/{username}/{date}
+            Path: /users/{username}/{id}
             Method: delete
       Policies:
       - DynamoDBCrudPolicy:

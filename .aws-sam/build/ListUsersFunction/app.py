@@ -3,10 +3,10 @@ import os
 import json
 
 
-def lambda_handler(message, context):
+def lambda_handler(event, context):
 
-    if ('httpMethod' not in message or
-            message['httpMethod'] != 'GET'):
+    if ('httpMethod' not in event or
+            event['httpMethod'] != 'GET'):
         return {
             'statusCode': 400,
             'headers': {},
@@ -17,20 +17,19 @@ def lambda_handler(message, context):
     region = os.environ.get('REGION', 'ap-southeast-1')
     aws_environment = os.environ.get('AWSENV', 'AWS')
 
-    if aws_environment == 'AWS_SAM_LOCAL':
-        users_table = boto3.resource(
-            'dynamodb',
-            endpoint_url='http://dynamodb:8000'
-        )
-    else:
-        users_table = boto3.resource(
-            'dynamodb',
-            region_name=region
-        )
+    client = boto3.client('dynamodb')
+    
+    paginator = client.get_paginator('scan')
+    response = paginator.paginate(
+    TableName='Users', Select='ALL_ATTRIBUTES',
+    ConsistentRead=True,
+    PaginationConfig={
+        'MaxItems': 10,
+        'PageSize': 10,
+        'StartingToken': 'esk'
+    }
+)
 
-    table = users_table.Table(table_name)
-
-    response = table.scan()
     print(response)
 
     return {

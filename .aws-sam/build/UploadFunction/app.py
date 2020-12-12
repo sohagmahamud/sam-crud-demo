@@ -7,6 +7,7 @@ import csv
 import uuid
 import logging
 from botocore.exceptions import ClientError
+import botocore
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -15,11 +16,28 @@ region = 'ap-southeast-1'
 bucket_name = 'sam-crud-csv-bucket'
 
 def lambda_handler(event, context):
-    
+    #Checking if bucket is already in S3
+    s3 = boto3.resource('s3')
+    bucket = s3.Bucket(bucket_name)
+    exists = True
+    try:
+        s3.meta.client.head_bucket(Bucket=bucket_name)
+    except botocore.exceptions.ClientError as e:
+    # If a client error is thrown, then check that it was a 404 error.
+    # If it was a 404 error, then the bucket does not exist.
+        error_code = e.response['Error']['Code']
+        if error_code == '404':
+            exists = False
+    #If bucket doesn't exist create S3 bucket
+    if exists == False:
+        s3.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={
+    'LocationConstraint': 'ap-southeast-1'})
+    #reading file from api event and upload to S3 bucket
     file_content = base64.b64decode(event['body'])
     file_path = 'sample.csv'
     s3 = boto3.client('s3')
     s3_response = s3.put_object(Bucket=bucket_name, Key=file_path, Body=file_content)
+    #writing csv content to dynamodb
     users_table = boto3.client('dynamodb', region_name=region)
     try:
         
@@ -39,7 +57,7 @@ def lambda_handler(event, context):
                 Item = {
                     'ID': {'S' : y},  
                     'UserName' : {'S' : str(UserName)},
-                    'datetime' : {'S' : x}
+                    'DateTime' : {'S' : x}
                 })
     
     except Exception as e:
