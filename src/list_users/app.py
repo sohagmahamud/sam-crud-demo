@@ -20,20 +20,18 @@ def lambda_handler(event, context):
     client = boto3.client('dynamodb')
     
     paginator = client.get_paginator('scan')
-    response = paginator.paginate(
+    pages = paginator.paginate(
     TableName='Users', Select='ALL_ATTRIBUTES',
     ConsistentRead=True,
     PaginationConfig={
         'MaxItems': 10,
         'PageSize': 10,
-        'StartingToken': 'esk'
     }
 )
-
-    print(response)
-
+    for page in pages:
+	    print(page)
     return {
         'statusCode': 200,
         'headers': {},
-        'body': json.dumps(response['Items'])
+        'body': json.dumps(page)
     }

@@ -16,7 +16,16 @@ region = 'ap-southeast-1'
 bucket_name = 'sam-crud-csv-bucket'
 
 def lambda_handler(event, context):
-    #Checking if bucket is already in S3
+    
+    if ('httpMethod' not in event or
+            event['httpMethod'] != 'GET'):
+        return {
+            'statusCode': 400,
+            'headers': {},
+            'body': json.dumps({'msg': 'Bad Request'})
+        }
+
+    # Checking if the bucket is already in S3
     s3 = boto3.resource('s3')
     bucket = s3.Bucket(bucket_name)
     exists = True
@@ -28,7 +37,7 @@ def lambda_handler(event, context):
         error_code = e.response['Error']['Code']
         if error_code == '404':
             exists = False
-    #If bucket doesn't exist create S3 bucket
+    # If bucket doesn't exist create S3 bucket
     if exists == False:
         s3.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={
     'LocationConstraint': 'ap-southeast-1'})
