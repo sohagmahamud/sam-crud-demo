@@ -18,20 +18,35 @@ def lambda_handler(event, context):
     aws_environment = os.environ.get('AWSENV', 'AWS')
 
     client = boto3.client('dynamodb')
+    StartKey = None
     
     paginator = client.get_paginator('scan')
-    pages = paginator.paginate(
+    response_iterator = paginator.paginate(
     TableName='Users', Select='ALL_ATTRIBUTES',
     ConsistentRead=True,
+    # FilterExpression='UserName',
     PaginationConfig={
         'MaxItems': 10,
         'PageSize': 10,
+        'StartingToken': 'StartKey'
     }
 )
-    for page in pages:
-	    print(page)
+
+   # extract the results
+    items = response_iterator['Items']
+    for item in items:
+        print(item)
+
+    queryCount += 1
+
+    while 'LastEvaluatedKey' in response_iterator:    
+        StartKey = response_iterator['LastEvaluatedKey']
+        items = response['Items']
+        for item in items:
+            print(item)
+        
+
     return {
-        'statusCode': 200,
-        'headers': {},
-        'body': json.dumps(page)
-    }
+     'statusCode': 200,
+     'headers': {},
+     'body': json.dumps()

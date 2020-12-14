@@ -18,7 +18,7 @@ bucket_name = 'sam-crud-csv-bucket'
 def lambda_handler(event, context):
     
     if ('httpMethod' not in event or
-            event['httpMethod'] != 'GET'):
+            event['httpMethod'] != 'POST'):
         return {
             'statusCode': 400,
             'headers': {},

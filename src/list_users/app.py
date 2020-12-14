@@ -45,10 +45,8 @@ def lambda_handler(event, context):
         for item in items:
             print(item)
         
-    queryCount += 1
-    print('-------------')
 
     return {
      'statusCode': 200,
      'headers': {},
-     'body': json.dumps(item)
+     'body': json.dumps()
