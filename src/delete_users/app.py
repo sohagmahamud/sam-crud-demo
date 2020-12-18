@@ -23,18 +23,19 @@ def lambda_handler(message, context):
             endpoint_url='http://dynamodb:8000'
         )
     else:
-        activities_table = boto3.resource(
+        users_table = boto3.resource(
             'dynamodb',
             region_name=region
         )
 
     table = users_table.Table(table_name)
+    user_id = message['pathParameters']['id']
     user_name = message['pathParameters']['username']
-    date_created = message['pathParameters']['date']
+    
 
     params = {
-        'username': user_name,
-        'date': date_created
+        'id': user_id,
+        'username': user_name
     }
 
     response = table.delete_item(

@@ -117,17 +117,17 @@ Resources:
     Properties:
       AttributeDefinitions:
         -
-          AttributeName: "ID"
+          AttributeName: "id"
           AttributeType: "S"
         -
-          AttributeName: "UserName"
+          AttributeName: "username"
           AttributeType: "S"
       KeySchema:
         -
-          AttributeName: "ID"
+          AttributeName: "id"
           KeyType: "HASH"
         -
-          AttributeName: "UserName"
+          AttributeName: "username"
           KeyType: "RANGE"
       ProvisionedThroughput:
         ReadCapacityUnits: "5"

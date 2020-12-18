@@ -29,18 +29,20 @@ def lambda_handler(message, context):
         )
 
     table = users_table.Table(table_name)
-    users = json.loads(message['body'])
+    user_id = message['pathParameters']['id']
+    user_name = message['pathParameters']['username']
+    
 
     params = {
-        'username': users['username'],
-        'date': users['date']
+        'id': user_id,
+        'username': user_name
     }
-
+    
     response = table.update_item(
-        Key=params
-        },
+        Key=params,
         ReturnValues="UPDATED_NEW"
     )
+    
     print(response)
 
     return {

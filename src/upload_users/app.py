@@ -13,7 +13,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 region = 'ap-southeast-1'
-bucket_name = 'sam-crud-csv-bucket'
+bucket_name = 'sam-crud-demo-csv-bkt'
 
 def lambda_handler(event, context):
     
@@ -60,13 +60,13 @@ def lambda_handler(event, context):
         x = now.strftime("%m/%d/%Y, %H:%M:%S")
         y = str(uuid.uuid4())
         for row in csv_reader:
-            UserName = row[0]
+            username = row[0]
             users_table.put_item(
                 TableName = "Users",
                 Item = {
-                    'ID': {'S' : y},  
-                    'UserName' : {'S' : str(UserName)},
-                    'DateTime' : {'S' : x}
+                    'id': {'S' : y},  
+                    'username' : {'S' : str(username)},
+                    'datetime' : {'S' : x}
                 })
     
     except Exception as e:
