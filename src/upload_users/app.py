@@ -27,7 +27,7 @@ def lambda_handler(event, context):
 
     # Checking if the bucket is already in S3
     s3 = boto3.resource('s3')
-    bucket = s3.Bucket(bucket_name)
+    # bucket = s3.Bucket(bucket_name)
     exists = True
     try:
         s3.meta.client.head_bucket(Bucket=bucket_name)
@@ -41,12 +41,12 @@ def lambda_handler(event, context):
     if exists == False:
         s3.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={
     'LocationConstraint': 'ap-southeast-1'})
-    #reading file from api event and upload to S3 bucket
+    # Reading file from api event and upload to S3 bucket
     file_content = base64.b64decode(event['body'])
     file_path = 'sample.csv'
     s3 = boto3.client('s3')
-    s3_response = s3.put_object(Bucket=bucket_name, Key=file_path, Body=file_content)
-    #writing csv content to dynamodb
+    s3.put_object(Bucket=bucket_name, Key=file_path, Body=file_content)
+    # Writing csv content to dynamodb
     users_table = boto3.client('dynamodb', region_name=region)
     try:
         
@@ -55,24 +55,25 @@ def lambda_handler(event, context):
         record_list = []
         record_list = (x.strip() for x in csv_file['Body'].read().decode('utf-8').split('\r\n'))
         csv_reader = csv.reader(record_list, delimiter=',', quotechar='"')
-        headers = next(csv_reader)
-        now = datetime.now()
-        x = now.strftime("%m/%d/%Y, %H:%M:%S")
-        y = str(uuid.uuid4())
+        # Removing header row
+        next(csv_reader)
+        
         for row in csv_reader:
+            now = datetime.now()
+            x = now.strftime("%m/%d/%Y, %H:%M:%S")
+            y = str(uuid.uuid4())
             username = row[0]
             users_table.put_item(
-                TableName = "Users",
-                Item = {
-                    'id': {'S' : y},  
-                    'username' : {'S' : str(username)},
-                    'datetime' : {'S' : x}
-                })
+                    TableName = "Users",
+                    Item = {
+                        'id': {'S' : y},  
+                        'username' : {'S' : str(username)},
+                        'datetime' : {'S' : x}
+                    })
     
     except Exception as e:
         print(str(e))
         
-    
     return {
         'statusCode': 200,
         'body': json.dumps('Success! Users in CSV uploaded to DynamoDB.')

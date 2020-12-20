@@ -3,10 +3,10 @@ import os
 import json
 
 
-def lambda_handler(message, context):
+def lambda_handler(event, context):
 
-    if ('body' not in message or
-            message['httpMethod'] != 'PUT'):
+    if ('body' not in event or
+            event['httpMethod'] != 'PUT'):
         return {
             'statusCode': 400,
             'headers': {},
@@ -29,10 +29,10 @@ def lambda_handler(message, context):
         )
 
     table = users_table.Table(table_name)
-    user_id = message['pathParameters']['id']
-    user_name = message['pathParameters']['username']
+    # users = json.loads(event['body'])
+    user_id = event['pathParameters']['id']
+    user_name = event['pathParameters']['username']
     
-
     params = {
         'id': user_id,
         'username': user_name
@@ -40,6 +40,10 @@ def lambda_handler(message, context):
     
     response = table.update_item(
         Key=params,
+        UpdateExpression="set username = :s",
+        ExpressionAttributeValues={
+            ':s': user_name
+        },
         ReturnValues="UPDATED_NEW"
     )
     
