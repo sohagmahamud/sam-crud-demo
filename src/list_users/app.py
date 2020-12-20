@@ -1,7 +1,6 @@
 import boto3
 import os
 import json
-from botocore.paginate import TokenEncoder
 
 def lambda_handler(event, context):
     
@@ -28,35 +27,24 @@ def lambda_handler(event, context):
             region_name=region
         )
 
-    pagination_config={
-            "MaxItems":20, 
-            "PageSize": 5
-            }
-    
-    paginator = client.get_paginator('scan')
-    response_iterator = paginator.paginate(
-        TableName=table_name, 
-        PaginationConfig=pagination_config
-    )
-    for page in response_iterator:
-        Items = page['Items']
-        print(Items)
-        print("--------------------------")
-
-    
-    encoder = TokenEncoder()
-    for page in response_iterator:
-        if "LastEvaluatedKey" in page:
-            encoded_token = encoder.encode({"ExclusiveStartKey": page["LastEvaluatedKey"]})
-            pagination_config = {
-                    "MaxItems": 20,
-                    "PageSize": 5,
-                    "StartingToken": encoded_token
-                    }
-            Items = page['Items']
+    results = []
+    last_evaluated_key = None
+    while True:
+        if last_evaluated_key:
+            response = client.scan(
+                TableName=table_name,
+                ExclusiveStartKey=last_evaluated_key
+            )
+        else: 
+            response = client.scan(TableName=table_name)
+            last_evaluated_key = response.get('LastEvaluatedKey')
+            results.extend(response['Items'])
+        
+        if not last_evaluated_key:
+            break
             
     return {
         'statusCode': 200,
         'headers': {},
-        'body': json.dumps(Items)
+        'body': json.dumps(results)
     }
