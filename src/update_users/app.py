@@ -2,9 +2,8 @@ import boto3
 import os
 import json
 
-
 def lambda_handler(event, context):
-
+    
     if ('body' not in event or
             event['httpMethod'] != 'PUT'):
         return {
@@ -12,7 +11,7 @@ def lambda_handler(event, context):
             'headers': {},
             'body': json.dumps({'msg': 'Bad Request'})
         }
-
+    
     table_name = os.environ.get('TABLE', 'Users')
     region = os.environ.get('REGION', 'ap-southeast-1')
     aws_environment = os.environ.get('AWSENV', 'AWS')
@@ -27,30 +26,27 @@ def lambda_handler(event, context):
             'dynamodb',
             region_name=region
         )
-
+    print(event)
+    data = json.loads(event['body'])
     table = users_table.Table(table_name)
-    # users = json.loads(event['body'])
-    user_id = event['pathParameters']['id']
-    user_name = event['pathParameters']['username']
     
-    params = {
-        'id': user_id,
-        'username': user_name
-    }
-    
-    response = table.update_item(
-        Key=params,
-        UpdateExpression="set username = :s",
-        ExpressionAttributeValues={
-            ':s': user_name
+    result = table.update_item(
+        Key={
+            'id': event['pathParameters']['id']
         },
-        ReturnValues="UPDATED_NEW"
+        ExpressionAttributeNames={
+          ':s': 'username',
+        },
+        ExpressionAttributeValues={
+          ':username': data['username']
+        },
+        UpdateExpression='SET username= :username, ',
+        ReturnValues='UPDATED_NEW',
     )
-    
-    print(response)
+
 
     return {
         'statusCode': 200,
         'headers': {},
-        'body': json.dumps({'msg': 'Users updated'})
+        'body': json.dumps(result['Attributes'])
     }
