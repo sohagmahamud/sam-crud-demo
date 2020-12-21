@@ -27,26 +27,27 @@ def lambda_handler(event, context):
             region_name=region
         )
     print(event)
-    data = json.loads(event['body'])
     table = users_table.Table(table_name)
+    data = json.loads(event['body'])
     
-    result = table.update_item(
-        Key={
-            'id': event['pathParameters']['id']
-        },
-        ExpressionAttributeNames={
-          ':s': 'username',
-        },
-        ExpressionAttributeValues={
-          ':username': data['username']
-        },
-        UpdateExpression='SET username= :username, ',
-        ReturnValues='UPDATED_NEW',
-    )
+    params = {
+        'id': data['id']
+        # 'username': data['username']
+    }
 
+    response = table.update_item(
+        Key=params,
+        UpdateExpression="set username = :s, description = :d",
+        ExpressionAttributeValues={
+            ':s': data['username'],
+            ':d': data['description']
+        },
+        ReturnValues="UPDATED_NEW"
+    )
+    print(response)
 
     return {
         'statusCode': 200,
         'headers': {},
-        'body': json.dumps(result['Attributes'])
+        'body': json.dumps({'msg': 'Activity updated'})
     }
