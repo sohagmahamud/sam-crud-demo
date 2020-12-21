@@ -28,5 +28,26 @@ You will be building a crud API where
 The format of the CSV is attached. (sample.csv)
 
 
+To deploy the project:
+
+1. Clone the source from the repo: (git must be installed on the system)
+
+> git clone https://github.com/sohagmahamud/sam-crud-demo.git
+
+2. Change working directory:
+
+> cd sam-crud-demo
+
+3. Deploy resources (aws sam must be installed)
+
+> sam build
+> sam deploy --guided
+
+
+
+
+
+
+
 
 
