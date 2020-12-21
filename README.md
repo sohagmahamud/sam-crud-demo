@@ -38,9 +38,12 @@ To deploy the project:
 
 > cd sam-crud-demo
 
-3. Deploy resources (aws sam must be installed)
+3. Build deploy configurations (aws sam must be installed)
 
 > sam build
+
+4. Deploy resources (aws sam must be installed)
+
 > sam deploy --guided
 
 
