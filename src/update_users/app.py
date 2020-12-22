@@ -26,15 +26,11 @@ def lambda_handler(event, context):
             'dynamodb',
             region_name=region
         )
-    print(event)
     table = users_table.Table(table_name)
     data = json.loads(event['body'])
-    
     params = {
         'id': data['id']
-        # 'username': data['username']
     }
-
     response = table.update_item(
         Key=params,
         UpdateExpression="set username = :s, description = :d",
@@ -49,5 +45,5 @@ def lambda_handler(event, context):
     return {
         'statusCode': 200,
         'headers': {},
-        'body': json.dumps({'msg': 'Activity updated'})
+        'body': json.dumps({'msg': 'UserName with description updated'})
     }

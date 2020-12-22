@@ -7,7 +7,7 @@ def lambda_handler(event, context):
     key= event['key'] 
     client = boto3.client('dynamodb', region_name='ap-southeast-1')
     
-    if(key is None):
+    if not key:
         pagination_config = {"MaxItems": 20, "PageSize": 5}
     else:
         encoder = TokenEncoder()
@@ -23,6 +23,10 @@ def lambda_handler(event, context):
             
     for page in response_iterator:
         Items = page['Items']
+    
+    print(Items)
+    print("LastEvaluatedKey")
+    
     return {
         'statusCode': 200,
         'headers': {},
