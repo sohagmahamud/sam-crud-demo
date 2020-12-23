@@ -1,0 +1,151 @@
+{
+	"info": {
+		"_postman_id": "ee93cfd5-4771-4a24-a88f-42977f3207ee",
+		"name": "sam-crud-demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Upload Users",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/csv",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "sample.csv"
+					}
+				},
+				"url": {
+					"raw": "https://iaovsyr8aa.execute-api.ap-southeast-1.amazonaws.com/Prod/upload",
+					"protocol": "https",
+					"host": [
+						"iaovsyr8aa",
+						"execute-api",
+						"ap-southeast-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"Prod",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Users - Fetch All Items",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://i1ddrn8uf9.execute-api.ap-southeast-1.amazonaws.com/Prod/users?id=8ddae800-7e06-41e4-9664-4259b60614a9",
+					"protocol": "https",
+					"host": [
+						"i1ddrn8uf9",
+						"execute-api",
+						"ap-southeast-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"Prod",
+						"users"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "8ddae800-7e06-41e4-9664-4259b60614a9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"f23e1264-578c-4ac8-a0d6-84b5b787a9cc\",\r\n  \"username\": \"TESTUSER\",\r\n  \"description\": \"updated through update operation\"\r\n}"
+				},
+				"url": {
+					"raw": "https://i1ddrn8uf9.execute-api.ap-southeast-1.amazonaws.com/Prod/users/0019db1d-2f22-46d6-b923-b9374667e2f3",
+					"protocol": "https",
+					"host": [
+						"i1ddrn8uf9",
+						"execute-api",
+						"ap-southeast-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"Prod",
+						"users",
+						"0019db1d-2f22-46d6-b923-b9374667e2f3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://i1ddrn8uf9.execute-api.ap-southeast-1.amazonaws.com/Prod/users/f23e1264-578c-4ac8-a0d6-84b5b787a9cc/TESTUSER",
+					"protocol": "https",
+					"host": [
+						"i1ddrn8uf9",
+						"execute-api",
+						"ap-southeast-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"Prod",
+						"users",
+						"f23e1264-578c-4ac8-a0d6-84b5b787a9cc",
+						"TESTUSER"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
